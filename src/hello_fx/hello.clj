@@ -23,9 +23,10 @@
   (if (java.awt.SystemTray/isSupported)
     (let [tray (java.awt.SystemTray/getSystemTray)
           tray-icon-size (-> tray (.getTrayIconSize))
-          _ (println (pr-str {:width (.-width tray-icon-size) :height (.-height tray-icon-size) :type :gif}))
+          _ (println (pr-str {:width (.-width tray-icon-size) :height (.-height tray-icon-size) :type :gif :os (System/getProperty "os.name")}))
+          icon-image (if (re-matches #"^Win.*" (System/getProperty "os.name")) "foo.gif" "foo.png")
           icon (try 
-                 (-> (ClassLoader/getSystemResource "foo.gif")
+                 (-> (ClassLoader/getSystemResource icon-image)
                      (javax.imageio.ImageIO/read)
                      (.getScaledInstance (.-width tray-icon-size)
                                          (.-height tray-icon-size)
