@@ -22,9 +22,14 @@
 (defn create-tray-icon [stage]
   (if (java.awt.SystemTray/isSupported)
     (let [tray (java.awt.SystemTray/getSystemTray)
+          tray-icon-size (-> tray (.getTrayIconSize))
+          _ (println (pr-str {:width (.-width tray-icon-size) :height (.-height tray-icon-size) :type :gif}))
           icon (try 
                  (-> (ClassLoader/getSystemResource "foo.gif")
-                     (javax.imageio.ImageIO/read))
+                     (javax.imageio.ImageIO/read)
+                     (.getScaledInstance (.-width tray-icon-size)
+                                         (.-height tray-icon-size)
+                                         java.awt.Image/SCALE_SMOOTH))
                  (catch Exception e
                    (.printStackTrace e)))
           popup (java.awt.PopupMenu.)
@@ -32,13 +37,10 @@
                        (actionPerformed [_ action-event]
                          (javafx.application.Platform/runLater
                           #(.show stage))))
-          tray-icon (java.awt.TrayIcon. icon)
-          icon-width (-> tray-icon (.getSize) (.-width))
-          _ (println (pr-str {:icon-width icon-width}))
-          icon-scaled (-> icon
-                          (.getScaledInstance icon-width -1 java.awt.Image/SCALE_SMOOTH))
+          
           tray-icon (doto (java.awt.TrayIcon. icon "Foo!" popup)
                       (.addActionListener on-show-l))
+          
           on-close-r (reify javafx.event.EventHandler
                        (handle [_ window-event]
                          (hide stage)))
