@@ -23,7 +23,7 @@
   (if (java.awt.SystemTray/isSupported)
     (let [tray (java.awt.SystemTray/getSystemTray)
           icon (try 
-                 (-> (ClassLoader/getSystemResource "foo.png")
+                 (-> (ClassLoader/getSystemResource "foo.gif")
                      (javax.imageio.ImageIO/read))
                  (catch Exception e
                    (.printStackTrace e)))
