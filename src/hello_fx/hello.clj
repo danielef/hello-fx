@@ -32,9 +32,13 @@
                        (actionPerformed [_ action-event]
                          (javafx.application.Platform/runLater
                           #(.show stage))))
+          tray-icon (java.awt.TrayIcon. icon)
+          icon-width (-> tray-icon (.getSize) (.-width))
+          _ (println (pr-str {:icon-width icon-width}))
+          icon-scaled (-> icon
+                          (.getScaledInstance icon-width -1 java.awt.Image/SCALE_SMOOTH))
           tray-icon (doto (java.awt.TrayIcon. icon "Foo!" popup)
                       (.addActionListener on-show-l))
-          
           on-close-r (reify javafx.event.EventHandler
                        (handle [_ window-event]
                          (hide stage)))
